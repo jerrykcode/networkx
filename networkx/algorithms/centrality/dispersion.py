@@ -60,17 +60,22 @@ def dispersion(G, u=None, v=None, normalized=True, alpha=1.0, b=0.0, c=0.0):
         ST = {n for n in G_u[v] if n in u_nbrs}
         set_uv = {u, v}
         # all possible ties of connections that u and b share
-        possib = combinations(ST, 2)
         total = 0
-        for s, t in possib:
+        stList = list(ST)
+        for i in range(len(stList)):
+            s = stList[i]
             # neighbors of s that are in G_u, not including u and v
-            nbrs_s = u_nbrs.intersection(G_u[s]) - set_uv
-            # s and t are not directly connected
-            if t not in nbrs_s:
-                # s and t do not share a connection
-                if nbrs_s.isdisjoint(G_u[t]):
-                    # tick for disp(u, v)
-                    total += 1
+            nbrs_s = u_nbrs.intersection(G_u[s])
+            nbrs_s.discard(u)
+            nbrs_s.discard(v)
+            for j in range(i + 1, len(stList)):
+                t = stList[j]
+                # s and t are not directly connected
+                if t not in nbrs_s:
+                    # s and t do not share a connection
+                    if nbrs_s.isdisjoint(G_u[t]):
+                        # tick for disp(u, v)
+                        total += 1
         # neighbors that u and v share
         embeddedness = len(ST)
 
